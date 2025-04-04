@@ -1,8 +1,7 @@
 from rest_framework import serializers
 from .models import (
     HistoricalCharacter, CharacterTag, CharacterAchievement,
-    DialogueScenario, DialogueResponse, ResponseKeyword,
-    DefaultResponse, Quiz, QuizOption,
+    DialogueScenario, DialogueResponse, Quiz, QuizOption,
     UserProgress, CompletedDialogue, DiscoveredFact
 )
 
@@ -38,24 +37,12 @@ class HistoricalCharacterSerializer(serializers.ModelSerializer):
         return None
 
 
-class ResponseKeywordSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ResponseKeyword
-        fields = ['keyword']
-
-
 class DialogueResponseSerializer(serializers.ModelSerializer):
-    keywords = ResponseKeywordSerializer(many=True, read_only=True)
 
     class Meta:
         model = DialogueResponse
-        fields = ['text', 'mood', 'fact', 'keywords']
+        fields = ['text', 'mood', 'fact']
 
-
-class DefaultResponseSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = DefaultResponse
-        fields = ['text']
 
 
 class QuizOptionSerializer(serializers.ModelSerializer):
