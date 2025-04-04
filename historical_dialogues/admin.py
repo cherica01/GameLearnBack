@@ -1,8 +1,8 @@
 from django.contrib import admin
 from .models import (
     HistoricalCharacter, CharacterTag, CharacterAchievement,
-    DialogueScenario, DialogueResponse, ResponseKeyword,
-    DefaultResponse, Quiz, QuizOption,
+    DialogueScenario, DialogueResponse,
+    Quiz, QuizOption,
     UserProgress, CompletedDialogue, DiscoveredFact
 )
 
@@ -26,38 +26,6 @@ class HistoricalCharacterAdmin(admin.ModelAdmin):
     inlines = [CharacterTagInline, CharacterAchievementInline]
 
 
-class ResponseKeywordInline(admin.TabularInline):
-    model = ResponseKeyword
-    extra = 1
-
-
-@admin.register(DialogueResponse)
-class DialogueResponseAdmin(admin.ModelAdmin):
-    list_display = ('get_character_name', 'text_preview', 'mood', 'has_fact')
-    search_fields = ('text', 'fact')
-    list_filter = ('mood',)
-    inlines = [ResponseKeywordInline]
-
-    def get_character_name(self, obj):
-        return obj.scenario.character.name
-    get_character_name.short_description = 'Character'
-    get_character_name.admin_order_field = 'scenario__character__name'
-
-    def text_preview(self, obj):
-        return obj.text[:50] + '...' if len(obj.text) > 50 else obj.text
-    text_preview.short_description = 'Response Text'
-
-    def has_fact(self, obj):
-        return bool(obj.fact)
-    has_fact.boolean = True
-    has_fact.short_description = 'Has Fact'
-
-
-class DefaultResponseInline(admin.TabularInline):
-    model = DefaultResponse
-    extra = 1
-
-
 class DialogueResponseInline(admin.TabularInline):
     model = DialogueResponse
     extra = 0
@@ -74,7 +42,7 @@ class QuizInline(admin.TabularInline):
 class DialogueScenarioAdmin(admin.ModelAdmin):
     list_display = ('character', 'responses_count', 'quizzes_count')
     search_fields = ('character__name', 'introduction', 'conclusion')
-    inlines = [DialogueResponseInline, DefaultResponseInline, QuizInline]
+    inlines = [DialogueResponseInline, QuizInline]
 
     def responses_count(self, obj):
         return obj.responses.count()
@@ -137,7 +105,6 @@ class UserProgressAdmin(admin.ModelAdmin):
 
 
 # Register remaining models
-admin.site.register(DefaultResponse)
 admin.site.register(QuizOption)
 admin.site.register(CompletedDialogue)
 admin.site.register(DiscoveredFact)
