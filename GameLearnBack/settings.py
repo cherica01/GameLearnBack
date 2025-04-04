@@ -38,13 +38,15 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'accounts',
-    
-    
+
     # Apps tierces
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
     'django_filters',
+
+    # Local apps
+    'biosim',
 ]
 AUTH_USER_MODEL = 'accounts.User'
 
