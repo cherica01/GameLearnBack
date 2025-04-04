@@ -47,6 +47,7 @@ INSTALLED_APPS = [
 
     # Local apps
     'biosim',
+    'historical_dialogues',
 ]
 AUTH_USER_MODEL = 'accounts.User'
 
