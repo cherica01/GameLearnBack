@@ -2,7 +2,9 @@ from rest_framework import serializers
 from .models import User, StudentProfile, TeacherProfile
 
 class UserSerializer(serializers.ModelSerializer):
+        choices=User.Role.choices,
         required=False
+    )
     
     class Meta:
         model = User
