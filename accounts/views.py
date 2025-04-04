@@ -3,8 +3,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import authenticate, login, logout
-from .models import User, StudentProfile, TeacherProfile
-from .serializers import UserSerializer, StudentProfileSerializer, TeacherProfileSerializer
+from .models import User
+from .serializers import UserSerializer
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework_simplejwt.tokens import RefreshToken
 # Inscription utilisateur
@@ -16,13 +16,6 @@ def register(request):
         user = serializer.save()
         user.set_password(serializer.validated_data["password"])  # Hash du mot de passe
         user.save()
-
-        # Création du profil selon le rôle
-        role = serializer.validated_data["role"]
-        if role == "student":
-            StudentProfile.objects.create(user=user)
-        elif role == "teacher":
-            TeacherProfile.objects.create(user=user)
 
         return Response({"message": "Inscription réussie"}, status=status.HTTP_201_CREATED)
 
@@ -70,36 +63,6 @@ def user_logout(request):
 @permission_classes([IsAuthenticated])
 def user_profile(request):
     user = request.user
-
-    if user.role == "student":
-        profile = user.student_profile
-        serializer = StudentProfileSerializer(profile)
-    elif user.role == "teacher":
-        profile = user.teacher_profile
-        serializer = TeacherProfileSerializer(profile)
-    else:
-        return Response({"error": "Profil non trouvé"}, status=status.HTTP_404_NOT_FOUND)
+    serializer = UserSerializer(user)
 
     return Response(serializer.data, status=status.HTTP_200_OK)
-
-# Mise à jour du profil
-@api_view(["PUT"])
-@permission_classes([IsAuthenticated])
-def update_profile(request):
-    user = request.user
-
-    if user.role == "student":
-        profile = user.student_profile
-        serializer_class = StudentProfileSerializer
-    elif user.role == "teacher":
-        profile = user.teacher_profile
-        serializer_class = TeacherProfileSerializer
-    else:
-        return Response({"error": "Profil non trouvé"}, status=status.HTTP_404_NOT_FOUND)
-
-    serializer = serializer_class(profile, data=request.data, partial=True)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
