@@ -39,7 +39,7 @@ def user_login(request):
     password = request.data.get("password")
 
     try:
-        user = User.objects.get(email=email)
+        user = User.objects.get(username=username)
         if not user.check_password(password):
             user = None
     except User.DoesNotExist:
