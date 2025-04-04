@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
 class Experiment(models.Model):
@@ -71,7 +71,7 @@ class SimulationResult(models.Model):
         verbose_name=_('Expérience')
     )
     user = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='simulation_results',
         verbose_name=_('Utilisateur')
@@ -115,7 +115,7 @@ class UserAchievement(models.Model):
     """Model representing achievements unlocked by users."""
 
     user = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='achievements',
         verbose_name=_('Utilisateur')
@@ -142,7 +142,7 @@ class UserNote(models.Model):
     """Model representing user notes for experiments."""
 
     user = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='notes',
         verbose_name=_('Utilisateur')
@@ -171,7 +171,7 @@ class UserPreference(models.Model):
     """Model representing user preferences for the BioSim application."""
 
     user = models.OneToOneField(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='biosim_preferences',
         verbose_name=_('Utilisateur')
