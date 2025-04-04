@@ -35,7 +35,7 @@ def user_login(request):
     if request.method == "GET":
         return Response({"error": "Utilisez POST pour vous connecter"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
-    email = request.data.get("email")
+    username = request.data.get("username")
     password = request.data.get("password")
 
     try:
