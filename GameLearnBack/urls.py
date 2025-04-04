@@ -23,7 +23,11 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/accounts/', include('accounts.urls')),
     path('api/biosim/', include('biosim.urls')),
+    path('api/historical_dialog/', include('historical_dialogues.urls')),
+    path('api/core/', include('core.urls')),
+    path('api/escapegame/', include('escapegame.urls')),
 ]
+
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
