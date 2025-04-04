@@ -3,6 +3,7 @@ from .models import User, StudentProfile, TeacherProfile
 
 class UserSerializer(serializers.ModelSerializer):
         required=False
+    
     class Meta:
         model = User
         fields = ["id", "username", "email", "role", "password"]
