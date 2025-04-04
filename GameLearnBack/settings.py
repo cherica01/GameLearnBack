@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'biosim',
     'historical_dialogues',
     'core',
+    'escapegame',
 ]
 AUTH_USER_MODEL = 'accounts.User'
 
