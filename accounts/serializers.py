@@ -2,7 +2,9 @@ from rest_framework import serializers
 from .models import User, StudentProfile, TeacherProfile
 
 class UserSerializer(serializers.ModelSerializer):
+    role = serializers.ChoiceField(
         choices=User.Role.choices,
+        default=User.Role.TEACHER,
         required=False
     )
     
