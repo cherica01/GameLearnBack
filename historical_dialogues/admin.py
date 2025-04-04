@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import (
     HistoricalCharacter, CharacterTag, CharacterAchievement,
     DialogueScenario, DialogueResponse, Quiz, QuizOption,
-    UserProgress, CompletedDialogue, DiscoveredFact, ResponseKeyword, DefaultResponse
+    UserProgress, CompletedDialogue, DiscoveredFact,
 )
 
 
