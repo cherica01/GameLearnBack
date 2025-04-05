@@ -6,7 +6,8 @@ from .models import (
     Achievement, 
     UserAchievement,
     UserNote,
-    UserPreference
+    UserPreference, 
+    ExpectedResult
 )
 
 class ExperimentVariableInline(admin.TabularInline):
@@ -58,3 +59,6 @@ class UserPreferenceAdmin(admin.ModelAdmin):
     list_display = ('user', 'high_quality', 'sound_enabled', 'tutorial_completed')
     list_filter = ('high_quality', 'sound_enabled', 'tutorial_completed')
     search_fields = ('user__username',)
+
+
+admin.site.register(ExpectedResult)

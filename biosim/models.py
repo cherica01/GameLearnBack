@@ -59,6 +59,37 @@ class ExperimentVariable(models.Model):
 
     def __str__(self):
         return f"{self.experiment.title} - {self.display_name}"
+    
+class ExpectedResult(models.Model):
+    """Résultat attendu pour une variable spécifique d'une expérience."""
+
+    experiment = models.ForeignKey(
+        Experiment,
+        on_delete=models.CASCADE,
+        related_name='expected_results',
+        verbose_name=_('Expérience')
+    )
+    variable = models.ForeignKey(
+        ExperimentVariable,
+        on_delete=models.CASCADE,
+        related_name='expected_results',
+        verbose_name=_('Variable')
+    )
+    name = models.CharField(_('Nom du résultat'), max_length=100)
+    description = models.TextField(_('Description'), blank=True)
+    expected_value = models.FloatField(_('Valeur attendue'))
+    tolerance = models.FloatField(_('Tolérance'), default=0.0, help_text=_("Tolérance acceptée autour de la valeur attendue"))
+    unit = models.CharField(_('Unité'), max_length=20, blank=True)
+
+    class Meta:
+        verbose_name = _('Résultat attendu')
+        verbose_name_plural = _('Résultats attendus')
+        ordering = ['experiment', 'variable__order', 'name']
+        unique_together = ['experiment', 'variable']
+
+    def __str__(self):
+        return f"{self.experiment.title} - {self.variable.display_name} - {self.name}"
+
 
 
 class SimulationResult(models.Model):

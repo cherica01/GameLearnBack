@@ -10,6 +10,7 @@ router.register(r'achievements', views.AchievementViewSet)
 router.register(r'user-achievements', views.UserAchievementViewSet, basename='user-achievements')
 router.register(r'notes', views.UserNoteViewSet, basename='notes')
 router.register(r'preferences', views.UserPreferenceViewSet, basename='preferences')
+router.register(r'expected-results', views.ExpectedResultViewSet, basename='expected-result')
 
 urlpatterns = [
     path('', include(router.urls)),
