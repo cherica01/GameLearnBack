@@ -40,7 +40,7 @@ class HistoricalCharacterChatService:
             return cached_prompt
 
         try:
-            scenario = character.dialogue_scenario
+            # scenario = character.dialogue_scenario
             prompt = f"""
             Tu incarnes {character.name}, {character.short_description}.
             Période: {character.period}
@@ -54,7 +54,7 @@ class HistoricalCharacterChatService:
             - Sois naturel et conversationnel
             - Utilise des détails historiques précis
             - Limite tes réponses à 2-3 phrases maximum
-            - Pose 1 question après 3 réponses
+            - Pose 1 questio    n après 3 réponses
             Envoie comme message d'introduction 'Bonjour, je suis {character.name}. Que veux-tu savoir sur {character.period}?'
             """
             
@@ -93,10 +93,10 @@ class HistoricalCharacterChatService:
             logger.warning(f"Mood detection failed: {str(e)}")
             return mood
         
-    def get_chat_history(self, user):
+    def get_chat_history(self, user, character):
             if not user or not user.id:
                 return []
-            return list(ChatHistory.objects.filter(user=user).order_by('-timestamp').values('prompt', 'response')[:3])
+            return list(ChatHistory.objects.filter(user=user, character= character).order_by('-timestamp').values('prompt', 'response')[:3])
 
     def _get_historical_context(self, character: HistoricalCharacter) -> list[ChatCompletionMessageParam]:
         """Récupère le contexte historique du personnage"""
@@ -123,42 +123,23 @@ class HistoricalCharacterChatService:
         self,
         user,
         character: HistoricalCharacter,
-        message: str,
-        
-       
-    ) -> Generator[str, None, None]:
-        """
-        Génère une réponse en streaming avec gestion d'humeur
-        
-        Args:
-            character: Le personnage historique
-            message: Message de l'utilisateur
-            chat_history: Historique de la conversation (optionnel)
-            
-        Yields:
-            Fragments de réponse en temps réel
-        """
+        message: str,  ) -> Generator[str, None, None]:
+
         try:
             # 1. Préparation du contexte
             mood = self._detect_mood(message)
             mood_description = self.MOOD_MAPPING.get(mood, 'neutre')
             
             system_prompt = self._get_character_prompt(character) + """\n\nTon humeur actuelle: {mood_description} + 
-            \n\n répond uniquement sous le format json suivant :
-            {{
-                "mood": "{mood}",
-                "response": "{response}"
-            }}
-             
+               
               """
             
             messages: list[ChatCompletionMessageParam] = [
                 {"role": "system", "content": system_prompt},
                 *self._get_historical_context(character)
             ]
-            history = self.get_chat_history(user)
-            # 2. Ajout de l'historique si fourni
-                        # 2. Ajout de l'historique si fourni
+            history = self.get_chat_history(user, character)
+            # 2. Ajout de l'historique si fourni                        # 2. Ajout de l'historique si fourni
             for h in reversed(history):
                 messages.extend([
                     {"role": "user", "content": h['prompt']},
@@ -176,25 +157,27 @@ class HistoricalCharacterChatService:
                 temperature=0.7,
                 stream=True,
             )
-            content = ""
-            for chunk in response:
-                if "choices" in chunk and len(chunk["choices"]) > 0:
-                    delta = chunk["choices"][0].get("delta", {})
-                    if "content" in delta:
-                        content += delta["content"]
-                        yield delta["content"]
 
-            full_response =content
+
+            
+            full_response = ""
+            for chunk in response:
+                if chunk.choices and chunk.choices[0].delta.content:  
+                    content = chunk.choices[0].delta.content
+                    full_response += content
+                    yield content
+
            
             ChatHistory.objects.create(
                 user=user,
-                prompt=json.dumps(messages),
+                character=character,
+                prompt=json.dumps(message),
                 response=full_response,
                 context= {}
             )
 
             self._save_dialogue_response(character, message, full_response, mood)
-            return full_response
+           
 
         except Exception as e:
             logger.error(f"Chat error: {str(e)}")

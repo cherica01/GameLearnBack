@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated,AllowAny
 from django.contrib.auth import authenticate, login, logout
 from .models import User
 from .serializers import UserSerializer
@@ -23,15 +23,17 @@ def register(request):
 
 @csrf_exempt
 @api_view(["POST"])
+@permission_classes([AllowAny])
 def user_login(request):
     if request.method == "GET":
         return Response({"error": "Utilisez POST pour vous connecter"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     username = request.data.get("username")
     password = request.data.get("password")
-
+    
     try:
         user = User.objects.get(username=username)
+        
         if not user.check_password(password):
             user = None
     except User.DoesNotExist:

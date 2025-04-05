@@ -16,8 +16,10 @@ from rest_framework.permissions import IsAuthenticated,IsAuthenticatedOrReadOnly
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.contrib.auth import get_user_model
+from django.http import JsonResponse
+import json
 User = get_user_model()
-
+chat_service = HistoricalCharacterChatService()
 class HistoricalCharacterViewSet(viewsets.ReadOnlyModelViewSet):
     """
     API endpoint that allows historical characters to be viewed.
@@ -38,39 +40,54 @@ class HistoricalCharacterViewSet(viewsets.ReadOnlyModelViewSet):
                 {"detail": f"No dialogue scenario found for {character.name}"},
                 status=status.HTTP_404_NOT_FOUND
             )
-        
+     
     @action(detail=True, methods=['post'])
     def chat(self, request, pk=None):
         """
-        Endpoint to chat with a historical character
+        Endpoint pour discuter avec un personnage historique
         """
         character = self.get_object()
         message = request.data.get('message')
         user = request.user
-        user = get_object_or_404(User, id=user.id)
 
-        if not user:
+        if not user.is_authenticated:
             return Response(
-                {"detail": "Authentication credentials were not provided"},
+                {"detail": "Authentification requise"},
                 status=status.HTTP_401_UNAUTHORIZED
             )
         
         if not message:
             return Response(
-                {"detail": "Message is required"},
+                {"detail": "Le message est obligatoire"},
                 status=status.HTTP_400_BAD_REQUEST
             )
             
-        chat_service = HistoricalCharacterChatService()
+        def event_stream():
+            service = HistoricalCharacterChatService()
+            accumulated_content = ""  # Pour accumuler le texte final
+            try:
+                for chunk in service.generate_response(user, character, message):
+                    # Si le chunk est un dictionnaire avec une erreur, on renvoie l'erreur immédiatement
+                    if isinstance(chunk, dict) and 'error' in chunk:
+                        return json.dumps({"error": chunk["error"]})
+                    else:
+                        # Si le chunk est un dictionnaire avec "content", on l'extrait,
+                        # sinon on suppose qu'il s'agit déjà d'une chaîne
+                        if isinstance(chunk, dict):
+                            accumulated_content += chunk.get("content", "")
+                        else:
+                            accumulated_content += chunk
+                return json.dumps({"content": accumulated_content})
+            except Exception as e:
+                print("Error in stream:", e)
+                return json.dumps({"error": str(e)})
 
-        def stream_generator():
-            for chunk in chat_service.generate_response(user, character, message):
-                yield chunk
-        return StreamingHttpResponse(
-            streaming_content=stream_generator(),
-            content_type='text/plain'
-        )
-    
+        data = event_stream()
+        print("Data:", data)  
+        return Response({"response": data, "mood": "neutral"})  
+        return StreamingHttpResponse(d, content_type='text/event-stream')
+
+         
 
 
 class UserProgressViewSet(viewsets.ViewSet):
