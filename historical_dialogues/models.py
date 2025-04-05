@@ -106,10 +106,7 @@ class QuizOption(models.Model):
 
 class UserProgress(models.Model):
     """Model representing a user's progress in historical dialogues."""
-    user_id = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE
-    )  # External user ID from frontend
+    user_id = models.CharField(max_length=100)
     score = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

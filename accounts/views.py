@@ -21,9 +21,8 @@ def register(request):
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# Connexion utilisateur
-@api_view(["POST"])
 @csrf_exempt
+@api_view(["POST"])
 def user_login(request):
     if request.method == "GET":
         return Response({"error": "Utilisez POST pour vous connecter"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)

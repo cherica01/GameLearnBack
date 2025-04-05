@@ -2,6 +2,8 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
 from .models import (
     HistoricalCharacter, DialogueScenario,
     UserProgress, CompletedDialogue, DiscoveredFact
@@ -11,28 +13,14 @@ from .serializers import (
     UserProgressSerializer, UserProgressUpdateSerializer
 )
 
-
-class HistoricalCharacterViewSet(viewsets.ReadOnlyModelViewSet):
+class TestAuthenticationView(APIView):
     """
-    API endpoint that allows historical characters to be viewed.
+    API endpoint to test if the user is authenticated.
     """
-    queryset = HistoricalCharacter.objects.all()
-    serializer_class = HistoricalCharacterSerializer
+    permission_classes = [IsAuthenticated]
 
-    @action(detail=True, methods=['get'])
-    def dialogue(self, request, pk=None):
-        character = self.get_object()
-        try:
-            dialogue_scenario = character.dialogue_scenario
-            serializer = DialogueScenarioSerializer(dialogue_scenario)
-            return Response(serializer.data)
-        except DialogueScenario.DoesNotExist:
-            return Response(
-                {"detail": f"No dialogue scenario found for {character.name}"},
-                status=status.HTTP_404_NOT_FOUND
-            )
-
-
+    def get(self, request):
+        return Response({"message": "You are authenticated!"})
 class UserProgressViewSet(viewsets.ViewSet):
     """
     API endpoint that allows user progress to be viewed and updated.

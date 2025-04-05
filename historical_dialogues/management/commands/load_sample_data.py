@@ -5,8 +5,8 @@ from django.core.files.storage import default_storage
 import requests
 from historical_dialogues.models import (
     HistoricalCharacter, CharacterTag, CharacterAchievement,
-    DialogueScenario, DialogueResponse, ResponseKeyword,
-    DefaultResponse, Quiz, QuizOption
+    DialogueScenario, DialogueResponse,
+    Quiz, QuizOption
 )
 
 
@@ -75,7 +75,57 @@ class Command(BaseCommand):
                     "Victoires militaires", 
                     "Concordat de 1801"
                 ]
-            }
+            },
+            {
+        "id": "marie-curie",
+        "name": "Marie Curie",
+        "period": "Ère moderne (1867-1934)",
+        "short_description": "Physicienne et chimiste polonaise naturalisée française, pionnière dans l'étude de la radioactivité.",
+        "portrait_url": "https://example.com/marie-curie.jpg",
+        "birth_year": 1867,
+        "death_year": 1934,
+        "nationality": "Polonaise/Française",
+        "tags": ["science", "physique", "chimie"],
+        "achievements": [
+            "Découverte du polonium et du radium",
+            "Deux prix Nobel (physique et chimie)",
+            "Développement de la radiologie mobile"
+        ]
+    },
+    # Ajout de Mahatma Gandhi
+    {
+        "id": "mahatma-gandhi",
+        "name": "Mahatma Gandhi",
+        "period": "Ère contemporaine (1869-1948)",
+        "short_description": "Leader politique et spirituel indien qui a mené l'Inde à l'indépendance par la non-violence.",
+        "portrait_url": "https://example.com/gandhi.jpg",
+        "birth_year": 1869,
+        "death_year": 1948,
+        "nationality": "Indien",
+        "tags": ["politique", "paix", "Inde"],
+        "achievements": [
+            "Mouvement d'indépendance indien",
+            "Satyagraha (résistance non-violente)",
+            "Marche du sel"
+        ]
+    },
+    # Ajout de Jeanne d'Arc
+    {
+        "id": "joan-of-arc",
+        "name": "Jeanne d'Arc",
+        "period": "Moyen Âge (1412-1431)",
+        "short_description": "Héroïne française de la guerre de Cent Ans, canonisée comme sainte patronne de la France.",
+        "portrait_url": "https://example.com/joan-of-arc.jpg",
+        "birth_year": 1412,
+        "death_year": 1431,
+        "nationality": "Française",
+        "tags": ["guerre", "religion", "France"],
+        "achievements": [
+            "Siège d'Orléans",
+            "Sacre de Charles VII",
+            "Symbole de la résistance française"
+        ]
+    }
         ]
         
         for char_data in characters_data:
@@ -139,8 +189,7 @@ class Command(BaseCommand):
                 mood="happy",
                 fact="La Joconde a été peinte entre 1503 et 1506, mais Leonardo a continué à y travailler jusqu'à sa mort en 1519."
             )
-            for keyword in ["joconde", "mona lisa", "monalise", "portrait"]:
-                ResponseKeyword.objects.create(response=joconde_response, keyword=keyword)
+          
             
             # Flying machines response
             flying_response = DialogueResponse.objects.create(
@@ -149,8 +198,7 @@ class Command(BaseCommand):
                 mood="thinking",
                 fact="Leonardo a conçu de nombreuses machines volantes, dont un parachute, un hélicoptère primitif et plusieurs ornithoptères, 400 ans avant les premiers vols humains réussis."
             )
-            for keyword in ["invention", "machine", "voler", "vol"]:
-                ResponseKeyword.objects.create(response=flying_response, keyword=keyword)
+         
             
             # Default responses
             default_responses = [
@@ -159,8 +207,7 @@ class Command(BaseCommand):
                 "La curiosité est la clé de la connaissance! J'ai toujours cherché à comprendre les mécanismes qui régissent notre monde, que ce soit dans l'art ou la science.",
                 "Permettez-moi de réfléchir à cela... À la Renaissance, nous avions une approche holistique du savoir, ne séparant pas l'art de la science comme vous le faites aujourd'hui."
             ]
-            for text in default_responses:
-                DefaultResponse.objects.create(scenario=leonardo_scenario, text=text)
+           
             
             # Add quizzes
             sfumato_quiz = Quiz.objects.create(
@@ -208,8 +255,7 @@ class Command(BaseCommand):
                 mood="thinking",
                 fact="Cléopâtre a eu un fils avec Jules César, nommé Ptolémée XV César (Césarion), qui a brièvement régné comme dernier pharaon d'Égypte avant d'être exécuté sur ordre d'Octave."
             )
-            for keyword in ["césar", "jules", "julius", "rome"]:
-                ResponseKeyword.objects.create(response=caesar_response, keyword=keyword)
+          
             
             # Default responses
             default_responses = [
@@ -218,8 +264,7 @@ class Command(BaseCommand):
                 "Permettez-moi de vous éclairer sur ce point. Mon règne a été marqué par des alliances stratégiques visant à maintenir l'Égypte comme puissance indépendante dans un monde dominé par Rome.",
                 "Je ne suis pas certaine de comprendre votre question. Peut-être pourriez-vous m'interroger sur la politique égyptienne, mes relations avec Rome, ou la culture alexandrine?"
             ]
-            for text in default_responses:
-                DefaultResponse.objects.create(scenario=cleopatra_scenario, text=text)
+            
             
             # Add quizzes
             dynasty_quiz = Quiz.objects.create(

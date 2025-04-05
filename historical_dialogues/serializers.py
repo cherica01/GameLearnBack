@@ -37,11 +37,16 @@ class HistoricalCharacterSerializer(serializers.ModelSerializer):
         return None
 
 
+
+
 class DialogueResponseSerializer(serializers.ModelSerializer):
+   
 
     class Meta:
         model = DialogueResponse
         fields = ['text', 'mood', 'fact']
+
+
 
 
 
@@ -61,15 +66,11 @@ class QuizSerializer(serializers.ModelSerializer):
 
 class DialogueScenarioSerializer(serializers.ModelSerializer):
     responses = DialogueResponseSerializer(many=True, read_only=True)
-    default_responses = serializers.SerializerMethodField()
     quizzes = QuizSerializer(many=True, read_only=True)
 
     class Meta:
         model = DialogueScenario
-        fields = ['introduction', 'quiz_introduction', 'conclusion', 'responses', 'default_responses', 'quizzes']
-
-    def get_default_responses(self, obj):
-        return [response.text for response in obj.default_responses.all()]
+        fields = ['introduction', 'quiz_introduction', 'conclusion', 'responses','quizzes']
 
 
 class CompletedDialogueSerializer(serializers.ModelSerializer):
@@ -91,6 +92,7 @@ class DiscoveredFactSerializer(serializers.ModelSerializer):
 
 
 class UserProgressSerializer(serializers.ModelSerializer):
+    
     completed_dialogues = CompletedDialogueSerializer(many=True, read_only=True)
     discovered_facts = DiscoveredFactSerializer(many=True, read_only=True)
 
