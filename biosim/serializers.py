@@ -7,7 +7,8 @@ from .models import (
     Achievement, 
     UserAchievement,
     UserNote,
-    UserPreference
+    UserPreference,
+    ExpectedResult
 )
 
 class UserSerializer(serializers.ModelSerializer):
@@ -43,7 +44,7 @@ class ExperimentListSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Experiment
-        fields = ['id', 'title', 'description', 'difficulty', 'duration', 'icon', 'image']
+        fields = ['id', 'title', 'description', 'difficulty', 'duration', 'icon', 'image', 'theory_content']
 
 
 class SimulationResultSerializer(serializers.ModelSerializer):
@@ -80,6 +81,10 @@ class UserAchievementSerializer(serializers.ModelSerializer):
         fields = ['id', 'user', 'achievement', 'achievement_details', 'unlocked_at']
         read_only_fields = ['id', 'user', 'unlocked_at']
 
+class ExpectedResultSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ExpectedResult
+        fields = '__all__'
 
 class UserNoteSerializer(serializers.ModelSerializer):
     experiment_title = serializers.CharField(source='experiment.title', read_only=True)

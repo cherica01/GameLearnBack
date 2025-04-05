@@ -12,7 +12,8 @@ from .models import (
     Achievement, 
     UserAchievement,
     UserNote,
-    UserPreference
+    UserPreference,
+    ExpectedResult
 )
 
 from .serializers import (
@@ -24,10 +25,14 @@ from .serializers import (
     AchievementSerializer,
     UserAchievementSerializer,
     UserNoteSerializer,
-    UserPreferenceSerializer
+    UserPreferenceSerializer,
+    ExpectedResultSerializer
 )
 from .permissions import IsOwnerOrReadOnly
 
+class ExpectedResultViewSet(viewsets.ModelViewSet):
+    queryset = ExpectedResult.objects.all()
+    serializer_class = ExpectedResultSerializer
 
 class ExperimentViewSet(viewsets.ModelViewSet):
     """
