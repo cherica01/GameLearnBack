@@ -150,3 +150,4 @@ CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:3000",
 ]
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ]
